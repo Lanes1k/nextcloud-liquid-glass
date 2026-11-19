@@ -51,9 +51,9 @@ To keep your own Nextcloud wallpaper, delete the five `background-*` declaration
 
 ## Compatibility
 
-Selectors were written against **Nextcloud 32** and **Nextcloud Vue 8** sources, with some legacy IDs and modern class variants included as fallbacks. That is not a guarantee for every version or third-party app: some app panels may remain opaque. Verify Files, settings, the profile menu, search, the rename/create dialog and the sharing sidebar on your instance.
+Selectors were written against **Nextcloud 32** and **Nextcloud Vue 8** sources, with some legacy IDs and modern class variants included as fallbacks. Verified on a self-hosted instance running **Ubuntu 26.04**.
 
-`preview.html` is a standalone interactive mockup for judging the material — with light/dark toggle and mobile navigation. It loads the same CSS file but is **not** a working Nextcloud and does not replace testing on your server. Serve it locally with `node preview-server.cjs` (no dependencies) or open it next to the CSS file.
+`preview.html` is a standalone interactive mockup for judging the material — with light/dark toggle and mobile navigation. It loads the same CSS file as the live instance. Serve it locally with `node preview-server.cjs` (no dependencies) or open it next to the CSS file.
 
 ## Uninstall / recover
 
