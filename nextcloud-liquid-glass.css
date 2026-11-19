@@ -1,0 +1,318 @@
+/*
+ * Nextcloud Liquid Glass — v1.0
+ * Paste this entire file into Administration settings → Theming → Custom CSS.
+ * CSS only. No external fonts, images, scripts or requests.
+ * Scope: authenticated user and settings pages; login/public pages are untouched.
+ * Built against Nextcloud 32 / NcVue 8 selectors, with legacy ID fallbacks.
+ * App-specific layouts and future Nextcloud versions may need adjustments.
+ */
+
+/* 1. Material. Inherit Nextcloud's RGB background to follow its theme choice.
+ * Tune --lg-blur (0–32px) and the surface alpha values to change the effect.
+ * Do not make --color-main-background transparent: editors need opaque paper.
+ */
+body:is(#body-user, #body-settings) {
+  --lg-blur: 24px;
+  --lg-saturation: 145%;
+  --lg-radius: 26px;
+  --lg-surface: rgba(var(--color-main-background-rgb, 255, 255, 255), .72);
+  --lg-surface-strong: rgba(var(--color-main-background-rgb, 255, 255, 255), .94);
+  --lg-surface-soft: rgba(var(--color-main-background-rgb, 255, 255, 255), .45);
+  --lg-rim: rgba(255, 255, 255, .48);
+  --lg-divider: rgba(120, 135, 160, .18);
+  --lg-hover: rgba(120, 145, 190, .12);
+  --lg-selected: var(--color-primary-element-light, var(--color-primary-light));
+  --lg-shadow: 0 16px 56px rgba(12, 23, 50, .14), 0 2px 8px rgba(12, 23, 50, .06);
+  --lg-inset: inset 0 1px 0 rgba(255, 255, 255, .5), inset 0 -1px 0 rgba(255, 255, 255, .08);
+  --lg-gloss: linear-gradient(135deg, rgba(255, 255, 255, .20), rgba(255, 255, 255, .025) 45%, rgba(255, 255, 255, .07));
+  --lg-wallpaper:
+    radial-gradient(ellipse at 8% 6%, rgba(81, 161, 255, .52), transparent 53%),
+    radial-gradient(ellipse at 92% 16%, rgba(175, 139, 247, .45), transparent 48%),
+    radial-gradient(ellipse at 66% 95%, rgba(69, 206, 211, .38), transparent 55%),
+    radial-gradient(ellipse at 4% 85%, rgba(233, 169, 198, .26), transparent 46%);
+  --lg-header-background: rgba(24, 39, 71, .76);
+  --lg-header-text: #fff;
+  --lg-control-radius: 14px;
+  --border-radius-element: 12px;
+  --border-radius-container: 18px;
+  --border-radius-container-large: 26px;
+  --body-container-radius: var(--lg-radius);
+  --font-face: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+
+  background-color: var(--color-main-background, #edf2fa) !important;
+  background-image: var(--lg-wallpaper) !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-attachment: fixed !important;
+}
+
+/* Progressive enhancement; older browsers keep the rgba border/selection. */
+@supports (color: color-mix(in srgb, white, transparent)) {
+  body:is(#body-user, #body-settings) {
+    --lg-rim: color-mix(in srgb, var(--color-main-text) 13%, transparent);
+    --lg-selected: color-mix(in srgb, var(--color-primary-element) 14%, var(--color-main-background));
+  }
+}
+
+/* 2. Header: retain its dimensions, position and stacking order.
+ * A dark material keeps the native white header glyphs legible.
+ */
+body:is(#body-user, #body-settings) #header:not(.header-guest) {
+  --color-background-plain-text: var(--lg-header-text);
+  --background-invert-if-bright: no;
+  --background-image-invert-if-bright: no;
+  --image-logoheader-custom: none;
+  color: var(--lg-header-text);
+  background: var(--lg-header-background) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .24);
+  box-shadow: 0 4px 24px rgba(15, 25, 50, .12), inset 0 1px 0 rgba(255, 255, 255, .16);
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation));
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation));
+}
+
+/* 3. One large frosted surface, not a blur on every row.
+ * Do not add transform/filter/opacity here: those can break fixed overlays.
+ */
+body:is(#body-user, #body-settings) :is(#content, #content-vue) {
+  background-color: var(--lg-surface) !important;
+  background-image: var(--lg-gloss) !important;
+  border-radius: var(--lg-radius) !important;
+  border: 1px solid var(--lg-rim);
+  box-shadow: var(--lg-shadow), var(--lg-inset);
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation));
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation));
+}
+
+/* Support both legacy server layouts and Vue application shells. */
+body:is(#body-user, #body-settings) :is(#app-content, #app-content-vue, .app-content) {
+  background-color: transparent !important;
+}
+
+body:is(#body-user, #body-settings) :is(#app-navigation, #app-navigation-vue, .app-navigation) {
+  background-color: var(--lg-surface-soft) !important;
+  background-image: var(--lg-gloss) !important;
+  border-inline-end: 1px solid var(--lg-divider);
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+body:is(#body-user, #body-settings) :is(#app-sidebar, #app-sidebar-vue, .app-sidebar) {
+  background-color: var(--lg-surface-strong) !important;
+  background-image: var(--lg-gloss) !important;
+  border-inline-start: 1px solid var(--lg-divider);
+  box-shadow: -8px 0 32px rgba(12, 23, 50, .05);
+}
+
+/* Only visual styling: preserve navigation offsets, collapse and touch targets. */
+body:is(#body-user, #body-settings) :is(.app-navigation-entry-link, .app-navigation-entry__link) {
+  border-radius: var(--lg-control-radius) !important;
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+body:is(#body-user, #body-settings) :is(.app-navigation-entry-link, .app-navigation-entry__link):hover {
+  background-color: var(--lg-hover) !important;
+}
+
+body:is(#body-user, #body-settings) :is(
+  .app-navigation-entry-link.active,
+  .app-navigation-entry-link[aria-current="page"],
+  .app-navigation-entry__link[aria-current="page"],
+  .app-navigation-entry.active > .app-navigation-entry-link
+) {
+  background-color: var(--lg-selected) !important;
+  color: var(--color-primary-element-light-text, var(--color-main-text)) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .24), 0 2px 8px rgba(12, 23, 50, .05);
+}
+
+/* 4. Files. Preserve row heights/spacing: the file list is virtualized.
+ * Sticky headers stay almost opaque, so names don't overlap while scrolling.
+ */
+body#body-user :is(.files-list__header, .files-list__thead, #controls) {
+  background-color: var(--lg-surface-strong) !important;
+  border-radius: var(--lg-control-radius);
+}
+
+body#body-user :is(.files-list__row, .files-list__row td, #fileList tr td) {
+  border-color: var(--lg-divider) !important;
+}
+
+body#body-user :is(.files-list__row, #fileList tr):hover {
+  background-color: var(--lg-hover) !important;
+}
+
+body#body-user :is(.files-list__row--selected, .files-list__row[aria-selected="true"], #fileList tr.selected) {
+  background-color: var(--lg-selected) !important;
+}
+
+/* 5. Controls: keep primary/destructive/disabled semantics from Nextcloud.
+ * No wildcard input/button rules, no icon filters, no universal transitions.
+ */
+body:is(#body-user, #body-settings) :is(
+  .button-vue--vue-secondary,
+  .button-vue--secondary,
+  input[type="text"],
+  input[type="search"],
+  input[type="email"],
+  input[type="url"],
+  input[type="password"],
+  input[type="number"],
+  textarea,
+  select
+) {
+  border-radius: var(--lg-control-radius) !important;
+}
+
+body:is(#body-user, #body-settings) :is(.button-vue--vue-secondary, .button-vue--secondary):not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--lg-surface-strong) !important;
+  background-image: var(--lg-gloss);
+  border-color: var(--lg-rim) !important;
+  box-shadow: 0 2px 6px rgba(12, 23, 50, .05), inset 0 1px 0 rgba(255, 255, 255, .18);
+}
+
+body:is(#body-user, #body-settings) :is(.button-vue--vue-secondary, .button-vue--secondary):not(:disabled):not([aria-disabled="true"]):hover {
+  background-color: var(--color-background-hover) !important;
+  border-color: var(--color-border-maxcontrast) !important;
+}
+
+/* Leave icon-only and error/warning buttons in their native shapes. */
+body:is(#body-user, #body-settings) .button-vue--vue-primary:not(.button-vue--icon-only) {
+  border-radius: 999px !important;
+}
+
+/* Focus ring only on controls touched by this theme. Never remove outlines. */
+body:is(#body-user, #body-settings) :is(
+  .button-vue,
+  .app-navigation-entry-link,
+  .app-navigation-entry__link,
+  input,
+  textarea,
+  select
+):focus-visible {
+  outline: 2px solid var(--color-primary-element) !important;
+  outline-offset: 2px;
+}
+
+/* 6. Floating menus & dialogs. Style their surface, never their positioning
+ * wrappers, transforms, z-index, overlay or document preview canvas.
+ */
+body:is(#body-user, #body-settings) :is(
+  .popovermenu,
+  .v-popper--theme-nc-popover .v-popper__inner,
+  .v-popper--theme-nc-popover-8 .v-popper__inner,
+  .v-popper--theme-nc-popover-9 .v-popper__inner,
+  .modal-wrapper .modal-container
+) {
+  color: var(--color-main-text);
+  background-color: var(--lg-surface-strong) !important;
+  background-image: var(--lg-gloss) !important;
+  border: 1px solid var(--lg-rim);
+  border-radius: 22px !important;
+  box-shadow: var(--lg-shadow), var(--lg-inset);
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation));
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation));
+}
+
+/* Dashboard cards sit on the main frosted surface; no extra blur necessary. */
+body#body-user :is(.app-dashboard, #app-dashboard) :is(.widget, .widget-container) {
+  background-color: var(--lg-surface-strong) !important;
+  border: 1px solid var(--lg-rim);
+  border-radius: 22px !important;
+  box-shadow: 0 6px 20px rgba(12, 23, 50, .07), var(--lg-inset);
+}
+
+/* 7. Mobile: don't change Nextcloud's drawer visibility/transform/width. */
+@media (max-width: 1024px) {
+  body:is(#body-user, #body-settings) {
+    --lg-blur: 16px;
+    --lg-radius: 20px;
+    --lg-surface: rgba(var(--color-main-background-rgb, 255, 255, 255), .84);
+  }
+
+  body:is(#body-user, #body-settings) :is(#app-navigation, #app-navigation-vue, .app-navigation) {
+    background-color: var(--lg-surface-strong) !important;
+  }
+}
+
+/* 8. Opaque fallback when backdrop-filter is unavailable. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  body:is(#body-user, #body-settings) {
+    --lg-surface: var(--color-main-background);
+    --lg-surface-soft: var(--color-main-background);
+    --lg-surface-strong: var(--color-main-background);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:is(#body-user, #body-settings) :is(.app-navigation-entry-link, .app-navigation-entry__link) {
+    transition: none !important;
+  }
+}
+
+/* Both Nextcloud high-contrast themes (including automatic OS mode) are
+ * handled through its data-themes attribute, whether on html or body.
+ */
+:is(html, body)[data-themes*="highcontrast"] body:is(#body-user, #body-settings),
+body:is(#body-user, #body-settings)[data-themes*="highcontrast"] {
+  --lg-blur: 0px;
+  --lg-saturation: 100%;
+  --lg-surface: var(--color-main-background);
+  --lg-surface-soft: var(--color-main-background);
+  --lg-surface-strong: var(--color-main-background);
+  --lg-rim: var(--color-border-maxcontrast);
+  --lg-divider: var(--color-border-maxcontrast);
+  --lg-hover: var(--color-background-hover);
+  --lg-gloss: none;
+  --lg-inset: inset 0 0 0 transparent;
+  --lg-shadow: 0 0 0 transparent;
+  --lg-wallpaper: none;
+  --lg-header-background: var(--color-main-background);
+  --lg-header-text: var(--color-main-text);
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  body:is(#body-user, #body-settings) {
+    --lg-blur: 0px;
+    --lg-saturation: 100%;
+    --lg-surface: var(--color-main-background);
+    --lg-surface-soft: var(--color-main-background);
+    --lg-surface-strong: var(--color-main-background);
+    --lg-gloss: none;
+    --lg-inset: inset 0 0 0 transparent;
+    --lg-rim: var(--color-border-maxcontrast);
+    --lg-divider: var(--color-border-maxcontrast);
+    --lg-hover: var(--color-background-hover);
+    --lg-wallpaper: none;
+  }
+}
+
+@media (forced-colors: active) {
+  body:is(#body-user, #body-settings) {
+    --lg-surface: Canvas;
+    --lg-surface-soft: Canvas;
+    --lg-surface-strong: Canvas;
+    --lg-header-background: Canvas;
+    --lg-header-text: CanvasText;
+    --lg-rim: CanvasText;
+    --lg-divider: CanvasText;
+    --lg-selected: Highlight;
+    --lg-blur: 0px;
+    --lg-gloss: none;
+    --lg-wallpaper: none;
+    --lg-shadow: 0 0 0 transparent;
+    --lg-inset: inset 0 0 0 transparent;
+  }
+}
+
+/* 9. Print: no glass/background or decorative shadows. */
+@media print {
+  body:is(#body-user, #body-settings) {
+    background: #fff !important;
+    --lg-surface: #fff;
+    --lg-surface-soft: #fff;
+    --lg-surface-strong: #fff;
+    --lg-gloss: none;
+    --lg-blur: 0px;
+    --lg-shadow: 0 0 0 transparent;
+    --lg-inset: inset 0 0 0 transparent;
+  }
+}
